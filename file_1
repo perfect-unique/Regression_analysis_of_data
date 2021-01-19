@@ -1,4 +1,4 @@
-**汽车之家的数据爬取**
+**汽车之家的数据爬取图片**
 import requests
 
 from bs4 import BeautifulSoup
