@@ -1,0 +1,73 @@
+import pandas as pd
+import numpy as np
+from matplotlib import pyplot as plt
+df_momen = pd.read_excel('D:\worksp\momen.xlsx', index_col=0)
+# print(df_momen.head(5))
+# print(df_momen.columns)
+# print(df_momen.describe())#查看当前描述配置
+# plt.scatter(df_momen['height'], df_momen['weight'])
+# plt.show()
+X = df_momen['height']#特征矩阵
+# print(X)
+Y = df_momen['weight']#目标向量
+# print(Y)
+
+
+import statsmodels.api as sm#超级参数的设置
+X_add_const = sm.add_constant(X)
+# print(X_add_const)
+myModel = sm.OLS(Y, X_add_const)#超级参数
+results = myModel.fit()#训练模型
+# print(results.summary())#查看其统计量
+# print(results.params)#斜率和截距项
+print(results.rsquared)#查看直线的拟合程度
+# print(results.f_pvalue)#查看F统计量的P值，看是否小于经验值
+# print(sm.stats.stattools.durbin_watson(results.resid))#显示Durbin_watson统计量
+# print(sm.stats.stattools.jarque_bera(results.resid))#显示JB统计量及其P值（JB统计量用于检测残差项是否为“正好态分布（前提）”）
+# Y_predict = results.predict()#用新模型用来从新预测
+# print(Y_predict)
+
+#可视化查看回归效果：
+# plt.rcParams['font.sans-serif'] = ['Microsoft YaHei']
+# plt.plot(df_momen['height'], df_momen['weight'], 'o')
+# plt.plot(df_momen['height'], Y_predict)
+# plt.title("女性身高与体重的线性回归分析")
+# plt.xlabel("身高")
+# plt.ylabel("体重")
+# plt.show()
+#从以上代码得出的结果来看用简单线性回归的效果并不是很好，因此改为多项式回归方法：
+
+import pandas as pd
+import numpy as np
+df_momen = pd.read_excel('D:\worksp\momen.xlsx', index_col=0)
+X = df_momen['height']
+Y = df_momen['weight']
+X =np.column_stack((X, np.power(X, 2), np.power(X, 3)))
+X_add_const = sm.add_constant(X)#保留截距项
+# print(X_add_const)
+myModel_updated = sm.OLS(Y, X_add_const)
+results_updated = myModel_updated.fit()
+print(results_updated.summary())
+print(results_updated.params)
+Y_predict_updated = results_updated.predict()#重新预测体重
+# print(Y_predict_updated)
+
+
+#模型完成之后的应用：
+H = 66.6
+print(results_updated.predict([1, H, np.power(H, 2), np.power(H, 3)]))
+
+
+
+# 线性图可视化
+plt.rcParams['font.sans-serif'] = ['Microsoft YaHei']
+plt.scatter(df_momen['height'], df_momen['weight'])
+plt.plot(df_momen['height'], Y_predict_updated)
+plt.title("女性身高与体重数据的线性回归分析")
+plt.xlabel("身高")
+plt.ylabel("体重")
+plt.show()
+
+# #模型完成之后的应用：
+# H = 66.6
+# print(results_updated.predict([1, H, np.power(H, 2), np.power(H, 3)]))
