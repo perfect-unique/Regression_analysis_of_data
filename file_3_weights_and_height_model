@@ -71,3 +71,5 @@ plt.show()
 # #模型完成之后的应用：
 # H = 66.6
 # print(results_updated.predict([1, H, np.power(H, 2), np.power(H, 3)]))
+
+
