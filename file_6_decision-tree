@@ -1,0 +1,76 @@
+#波士顿房价预测
+
+import numpy as np
+import pandas as pd
+import sklearn.datasets as sd
+import sklearn.utils as su
+import sklearn.tree as st
+import sklearn.metrics as sm
+import sklearn.ensemble as se
+import matplotlib.pyplot as plt
+
+boston = sd.load_boston()
+print(boston.data.shape)
+print(boston.target.shape)
+print(boston.feature_names)
+names = boston.feature_names
+#打乱数据
+x, y = su.shuffle(boston.data, boston.target, random_state=7)
+# print(y)
+train_size = int(len(x) * 0.8)
+train_x, test_x, train_y, test_y = x[:train_size], x[train_size:], y[:train_size], y[train_size:]
+#构建决策树模型
+model = st.DecisionTreeRegressor(max_depth=4)
+model.fit(train_x, train_y)
+predict_test_y = model.predict(test_x)
+
+print(test_y.shape)
+print(predict_test_y.shape)
+# #评估结果
+r = sm.r2_score(test_y, predict_test_y)
+# print(sm.mean_absolute_error(test_y, predict_test_y))
+print(r)
+DT_fi = model.feature_importances_
+print(DT_fi)
+#构建Adaboost模型,正向激励
+model = se.AdaBoostRegressor(model, n_estimators=400, random_state=7)
+model.fit(train_x, train_y)
+predict_test_y = model.predict(test_x)
+r = sm.r2_score(test_y, predict_test_y)
+print(r)
+ada_fi = model.feature_importances_
+print(ada_fi)
+
+plt.figure('Feature Importances', facecolor='lightgray')
+plt.subplot(211)
+plt.title('DT feature imporrtances', fontsize=16)
+plt.ylabel('Feature importances', fontsize=14)
+plt.grid(linestyle=":")
+x = np.arange(DT_fi.size)
+#排序
+sorted_indices = DT_fi.argsort()[::-1]
+DT_fi = DT_fi[sorted_indices]
+
+plt.bar(x, DT_fi, 0.8, color='blue', label='DT feature importances')
+plt.xticks(x, names[sorted_indices], rotation=45)
+plt.legend()
+plt.tight_layout()
+
+
+plt.subplot(212)
+plt.title('adaBoost feature imporrtances', fontsize=16)
+plt.ylabel('Feature importances', fontsize=14)
+plt.grid(linestyle=":")
+x = np.arange(DT_fi.size)
+#排序
+sorted_indices = ada_fi.argsort()[::-1]
+ada_fi = ada_fi[sorted_indices]
+
+plt.bar(x, ada_fi, 0.8, color='green', label='adaBoost feature importances',)
+plt.xticks(x, names[sorted_indices], rotation=45)
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+
+
