@@ -10,9 +10,9 @@ driver = webdriver.Chrome(options=options)
 
 driver.get("https://login.51job.com/login.php")
 
-driver.find_element_by_xpath('//*[@id="loginname"]').send_keys("15578704681")
+driver.find_element_by_xpath('//*[@id="loginname"]').send_keys("1557870****")
 
-driver.find_element_by_xpath('//*[@id="password"]').send_keys("bao333666")
+driver.find_element_by_xpath('//*[@id="password"]').send_keys("*****33666")
 
 driver.find_element_by_xpath('//*[@id="login_btn"]').click()
 #全屏最大化
